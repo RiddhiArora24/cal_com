@@ -1,0 +1,60 @@
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ==========================================
+// 1. EVENT TYPE MODEL
+// Defines the meeting configurations (e.g., "15-min sync")
+// ==========================================
+model EventType {
+  id          String    @id @default(uuid())
+  title       String
+  description String?
+  duration    Int       // Meeting duration explicitly calculated in minutes
+  slug        String    @unique // URL pattern handle, e.g., /book/tech-interview
+  bookings    Booking[] // Relational array linking matching active bookings
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("event_types") // Maps model definition to snake_case PostgreSQL tables cleanly
+}
+
+// ==========================================
+// 2. AVAILABILITY MODEL
+// Defines the core standard operating schedule matrix
+// ==========================================
+model Availability {
+  id        String   @id @default(uuid())
+  dayOfWeek String?  // "Monday", "Tuesday" etc. (Optional agar specific date ho)
+  date      String?  // Specific date ke liye tracking, e.g., "2026-05-25"
+  startTime String   // "09:00"
+  endTime   String   // "17:00"
+  isActive  Boolean  @default(true) // Open hai ya closed check rakhne ke liye
+
+  @@map("availabilities")
+}
+
+
+// ==========================================
+// 3. BOOKING MODEL
+// Stores client-confirmed operational time allocations
+// ==========================================
+model Booking {
+  id          String    @id @default(uuid())
+  eventTypeId String    @map("event_type_id")
+  eventType   EventType @relation(fields: [eventTypeId], references: [id], onDelete: Cascade)
+  bookerName  String    @map("booker_name")
+  bookerEmail String    @map("booker_email")
+  date        String    // ISO Date tracking pattern string representation: "2026-05-25"
+  startTime   String    // Explicit slot target alignment representation: "10:30"
+  createdAt   DateTime  @default(now())
+
+  @@unique([date, startTime]) // Database-level constraint to prevent any data race condition double-booking
+  @@map("bookings")
+}
