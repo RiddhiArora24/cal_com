@@ -14,7 +14,7 @@ export default function PublicBookingPage({ eventSlug, navigateBack }) {
   const [dynamicTimeSlots, setDynamicTimeSlots] = useState([]);
   const [takenSlots, setTakenSlots] = useState([]);
 
-  const API_URL = 'http://localhost:5000/api';
+  const API_URL = 'https://cal-com-backend-k159.onrender.com/api';
 
   useEffect(() => {
     axios.get(`${API_URL}/event-types`)
