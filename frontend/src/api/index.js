@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
+  baseURL: "https://cal-com-backend-k159.onrender.com/api",
 });
 
 // Clean, modular API handlers matching your professional controllers
