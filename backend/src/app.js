@@ -6,7 +6,6 @@ const availabilityRoutes = require('./routes/availability.routes');
 
 const app = express();
 
-// Middleware
 app.use(cors({
   origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
   credentials: true,
@@ -14,12 +13,11 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Main Root API Mapping
 app.use('/api', eventRoutes);
 app.use('/api', bookingRoutes);
 app.use('/api', availabilityRoutes);
 
-// Fallback Global Health Check Route
+
 app.get('/health', (req, res) => res.status(200).json({ status: 'healthy' }));
 
 module.exports = app;
